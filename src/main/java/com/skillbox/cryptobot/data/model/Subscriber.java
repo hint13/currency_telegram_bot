@@ -24,8 +24,8 @@ public class Subscriber {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(nullable = false)
-  private Integer user_id;
+  @Column(nullable = false, unique = true)
+  private Long user_id;
 
   private Double subscribe_price;
 }

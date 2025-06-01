@@ -1,18 +1,27 @@
 package com.skillbox.cryptobot.bot.command;
 
+import com.skillbox.cryptobot.data.model.Subscriber;
+import com.skillbox.cryptobot.service.SubscriberService;
+import com.skillbox.cryptobot.utils.TextUtil;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.text.MessageFormat;
+
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GetSubscriptionCommand implements IBotCommand {
+
+    private final SubscriberService subscriberService;
 
     @Override
     public String getCommandIdentifier() {
@@ -29,7 +38,19 @@ public class GetSubscriptionCommand implements IBotCommand {
         SendMessage answer = new SendMessage();
         answer.setChatId(message.getChatId());
 
-        answer.setText("echo: get_subscription");
+        User user = message.getFrom();
+        if (user != null) {
+            Subscriber subscriber = subscriberService.getSubscriber(user.getId());
+            if (subscriber != null && subscriber.getSubscribe_price() != null) {
+                answer.setText(MessageFormat.format(
+                        "Вы подписаны на курс биткоина в {0} USD",
+                        TextUtil.toString(subscriber.getSubscribe_price())
+                ));
+            } else {
+                answer.setText("У вас нет активной подписки.");
+            }
+        } else
+            answer.setText("echo: get_subscription");
 
         try {
             absSender.execute(answer);

@@ -40,7 +40,9 @@ dependencies {
 	implementation group: 'org.postgresql', name: 'postgresql', version: postgresqlDriverVersion
 	implementation group: 'org.springframework', name: 'spring-orm', version: springOrmVersion
 
-
+	implementation 'org.springframework:spring-tx:5.3.23'
+	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+	implementation 'com.zaxxer:HikariCP:5.0.1' // Пул соединений
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
